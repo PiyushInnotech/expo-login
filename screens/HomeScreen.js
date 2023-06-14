@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserDetails } from '../redux/auth/authActions';
 
 const HomeScreen = ({ navigation }) => {
-    const [user, setUser] = useState({})
+    const dispatch = useDispatch()
+
+    const user = useSelector((state) => {state.auth.user})
 
     const getUser = async () => {
         try {
             let userDetails = await AsyncStorage.getItem('userLogged')
             if (userDetails !== null) {
-                setUser(JSON.parse(userDetails))
+                let data = JSON.parse(userDetails)
+                dispatch(getUserDetails(data))
             } else {
                 navigation.navigate('Login')
             }

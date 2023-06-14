@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+import { handleUserLogin } from '../redux/auth/authActions';
+// import { useFocusEffect } from '@react-navigation/native';
 
 const LoginScreen = ({ navigation }) => {
     const [userLogin, setUserLogin] = useState({
@@ -9,6 +12,7 @@ const LoginScreen = ({ navigation }) => {
     })
 
     const [error, setError] = useState('')
+    const dispatch = useDispatch()
 
     const handleLoginChange = (name, value) => {
         setError('')
@@ -23,6 +27,7 @@ const LoginScreen = ({ navigation }) => {
             setError('')
             try {
                 await AsyncStorage.setItem('userLogged', JSON.stringify(userLogin))
+                dispatch(handleUserLogin(userLogin))
                 navigation.navigate('Home')
             } catch (error) {
                 console.log(error)
@@ -33,6 +38,16 @@ const LoginScreen = ({ navigation }) => {
     const goToSignup = () => {
         navigation.navigate('Signup')
     }
+
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         setError('')
+    //         setUserLogin({
+    //             email: '',
+    //             password: ''
+    //         })
+    //     }, [])
+    // );
 
     return (
         <View style={styles.container}>
@@ -56,8 +71,8 @@ const LoginScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                 <Text style={styles.addButtonText}>login</Text>
             </TouchableOpacity>
-            <View stye={{ flex:1, justifyContent: 'center', alignItems:'center'}}>
-                <Text style= {{color: '#2196F3', marginTop:10}} onPress={goToSignup}>Not a user. Signup</Text>
+            <View stye={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: '#2196F3', marginTop: 10 }} onPress={goToSignup}>Not a user. Signup</Text>
             </View>
         </View>
     );
